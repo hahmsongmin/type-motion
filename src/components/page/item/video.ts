@@ -5,7 +5,7 @@ export class VideoComponent extends BaseComponent<HTMLIFrameElement> {
     super(
       `<section class="video">
         <h3 class="video__title"></h3>
-        <div class="video__player"><iframe class="youtube__iframe" width="600" height="300" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></div>
+        <div class="video__player"><iframe class="youtube__iframe" width="500" height="280" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></div>
        <section>`
     );
     const youtubeTitle = this.element.querySelector('.video__title') as HTMLHeadingElement;
