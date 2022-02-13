@@ -1,4 +1,6 @@
 import DiaLogComponet from './components/dialog/dialog.js';
+import MediaSectionInput from './components/dialog/media-input.js';
+import TextSectionInput from './components/dialog/text-input.js';
 import { ImageComponent } from './components/page/item/image.js';
 import { NoteComponent } from './components/page/item/note.js';
 import { TodoComponent } from './components/page/item/todo.js';
@@ -7,7 +9,7 @@ import { PageComponent, PageItemComponent } from './components/page/page.js';
 
 class App {
   private readonly page: PageComponent;
-  constructor(appRoot: HTMLElement) {
+  constructor(appRoot: HTMLElement, private dialogRoot: HTMLElement) {
     this.page = new PageComponent(PageItemComponent);
     this.page.attachTo(appRoot);
 
@@ -18,46 +20,59 @@ class App {
     const target = event.target as Element;
     if (event.currentTarget !== event.target) {
       const dialog = new DiaLogComponet();
-      dialog.setOnCloseListener(() => {
-        dialog.removeFrom(document.body);
-      });
-      dialog.setOnSubmitListener(() => {
-        // 섹션을 만들어서 추가
-        dialog.removeFrom(document.body);
-      });
+      const mediaInputSection = new MediaSectionInput();
+      const textInputSection = new TextSectionInput();
       switch (target.id) {
         case 'new-video':
-          dialog.setOnInputListner((title: string, contents: string) => {
-            const video = new VideoComponent(title, contents);
+          dialog.addChild(mediaInputSection);
+          dialog.setOnCloseListener(() => {
+            dialog.removeFrom(this.dialogRoot);
+          });
+          dialog.setOnSubmitListener(() => {
+            const video = new VideoComponent(mediaInputSection.title, mediaInputSection.url);
             this.page.addChild(video);
+            dialog.removeFrom(this.dialogRoot);
           });
           break;
         case 'new-image':
-          dialog.setOnInputListner((title: string, contents: string) => {
-            const image = new ImageComponent(title, contents);
+          dialog.addChild(mediaInputSection);
+          dialog.setOnCloseListener(() => {
+            dialog.removeFrom(this.dialogRoot);
+          });
+          dialog.setOnSubmitListener(() => {
+            const image = new ImageComponent(mediaInputSection.title, mediaInputSection.url);
             this.page.addChild(image);
+            dialog.removeFrom(this.dialogRoot);
           });
           break;
         case 'new-note':
-          dialog.setOnInputListner((title: string, contents: string) => {
-            const note = new NoteComponent(title, contents);
+          dialog.addChild(textInputSection);
+          dialog.setOnCloseListener(() => {
+            dialog.removeFrom(this.dialogRoot);
+          });
+          dialog.setOnSubmitListener(() => {
+            const note = new NoteComponent(textInputSection.title, textInputSection.body);
             this.page.addChild(note);
+            dialog.removeFrom(this.dialogRoot);
           });
           break;
         case 'new-todo':
-          dialog.setOnInputListner((title: string, contents: string) => {
-            const todo = new TodoComponent(title, contents);
+          dialog.addChild(textInputSection);
+          dialog.setOnCloseListener(() => {
+            dialog.removeFrom(this.dialogRoot);
+          });
+          dialog.setOnSubmitListener(() => {
+            const todo = new TodoComponent(textInputSection.title, textInputSection.body);
             this.page.addChild(todo);
+            dialog.removeFrom(this.dialogRoot);
           });
           break;
         default:
           break;
       }
-      dialog.attachTo(document.body);
+      dialog.attachTo(this.dialogRoot);
     }
   };
 }
 
-new App(document.querySelector('.document')! as HTMLElement);
-
-// 'https://picsum.photos/600/300'
+new App(document.querySelector('.document')! as HTMLElement, document.body);
