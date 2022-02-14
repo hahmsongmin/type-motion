@@ -20,6 +20,19 @@ class App {
 
     const btn = document.querySelector('.control-panel');
     btn?.addEventListener('click', this.btnClickHandler);
+
+    this.page.addChild(new VideoComponent('Video Title', 'https://www.youtube.com/watch?v=uWsmRIf7tmo'));
+    this.page.addChild(new VideoComponent('Video Title', 'https://www.youtube.com/watch?v=EUZ8YUxhMNM'));
+    this.page.addChild(new NoteComponent('Note Title', 'Why is Typescript so hard?'));
+    this.page.addChild(
+      new ImageComponent(
+        'Image Title',
+        'https://blog.kakaocdn.net/dn/cKLyPD/btrcVjgL9M7/N0KfsqEVQipTSkuSmCsXz1/05-%EC%82%B0%EA%B3%BC%EB%85%B8%EC%9D%84-C-Blue%20Sky-%ED%95%98%EB%8A%98%EB%B0%B0%EA%B2%BD%ED%99%94%EB%A9%B4.png?attach=1&knm=img.png'
+      )
+    );
+    this.page.addChild(new ImageComponent('Image Title', 'https://blog.kakaocdn.net/dn/XlVZH/btqIH50as13/LwCnDkeRzRz9kETtUMaHyk/img.jpg'));
+    this.page.addChild(new TodoComponent('Todo Title', 'Bob eat!'));
+    this.page.addChild(new VideoComponent('Video Title', 'https://www.youtube.com/watch?v=7nrDM-ujIHo'));
   }
 
   private bindElementToDialog = <T extends (MediaData | TextData) & Component>(inputComponent: InputComponentConstructor<T>, makeSection: (input: T) => Component) => {

@@ -250,3 +250,8 @@ body {
   padding: 1em;
   color: var(--smokywhite);
 }
+
+/* mute-children 안에 있는 모든 태그들을 선택 */
+.mute-children * {
+  pointer-events: none;
+}
