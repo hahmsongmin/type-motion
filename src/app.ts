@@ -1,4 +1,5 @@
-import DiaLogComponet from './components/dialog/dialog.js';
+import { Component } from './components/component.js';
+import DiaLogComponet, { MediaData, TextData } from './components/dialog/dialog.js';
 import MediaSectionInput from './components/dialog/media-input.js';
 import TextSectionInput from './components/dialog/text-input.js';
 import { ImageComponent } from './components/page/item/image.js';
@@ -6,6 +7,10 @@ import { NoteComponent } from './components/page/item/note.js';
 import { TodoComponent } from './components/page/item/todo.js';
 import { VideoComponent } from './components/page/item/video.js';
 import { PageComponent, PageItemComponent } from './components/page/page.js';
+
+type InputComponentConstructor<T = (MediaData | TextData) & Component> = {
+  new (): T;
+};
 
 class App {
   private readonly page: PageComponent;
@@ -16,61 +21,41 @@ class App {
     const btn = document.querySelector('.control-panel');
     btn?.addEventListener('click', this.btnClickHandler);
   }
+
+  private bindElementToDialog = <T extends (MediaData | TextData) & Component>(inputComponent: InputComponentConstructor<T>, makeSection: (input: T) => Component) => {
+    const dialog = new DiaLogComponet();
+    const inputSection = new inputComponent();
+    dialog.addChild(inputSection);
+    dialog.setOnCloseListener(() => {
+      dialog.removeFrom(this.dialogRoot);
+    });
+    dialog.setOnSubmitListener(() => {
+      const video = makeSection(inputSection);
+      this.page.addChild(video);
+      dialog.removeFrom(this.dialogRoot);
+    });
+    dialog.attachTo(this.dialogRoot);
+  };
+
   btnClickHandler = (event: Event) => {
     const target = event.target as Element;
     if (event.currentTarget !== event.target) {
-      const dialog = new DiaLogComponet();
-      const mediaInputSection = new MediaSectionInput();
-      const textInputSection = new TextSectionInput();
       switch (target.id) {
         case 'new-video':
-          dialog.addChild(mediaInputSection);
-          dialog.setOnCloseListener(() => {
-            dialog.removeFrom(this.dialogRoot);
-          });
-          dialog.setOnSubmitListener(() => {
-            const video = new VideoComponent(mediaInputSection.title, mediaInputSection.url);
-            this.page.addChild(video);
-            dialog.removeFrom(this.dialogRoot);
-          });
+          this.bindElementToDialog(MediaSectionInput, (input: MediaSectionInput) => new VideoComponent(input.title, input.url));
           break;
         case 'new-image':
-          dialog.addChild(mediaInputSection);
-          dialog.setOnCloseListener(() => {
-            dialog.removeFrom(this.dialogRoot);
-          });
-          dialog.setOnSubmitListener(() => {
-            const image = new ImageComponent(mediaInputSection.title, mediaInputSection.url);
-            this.page.addChild(image);
-            dialog.removeFrom(this.dialogRoot);
-          });
+          this.bindElementToDialog(MediaSectionInput, (input: MediaSectionInput) => new ImageComponent(input.title, input.url));
           break;
         case 'new-note':
-          dialog.addChild(textInputSection);
-          dialog.setOnCloseListener(() => {
-            dialog.removeFrom(this.dialogRoot);
-          });
-          dialog.setOnSubmitListener(() => {
-            const note = new NoteComponent(textInputSection.title, textInputSection.body);
-            this.page.addChild(note);
-            dialog.removeFrom(this.dialogRoot);
-          });
+          this.bindElementToDialog(TextSectionInput, (input: TextSectionInput) => new NoteComponent(input.title, input.body));
           break;
         case 'new-todo':
-          dialog.addChild(textInputSection);
-          dialog.setOnCloseListener(() => {
-            dialog.removeFrom(this.dialogRoot);
-          });
-          dialog.setOnSubmitListener(() => {
-            const todo = new TodoComponent(textInputSection.title, textInputSection.body);
-            this.page.addChild(todo);
-            dialog.removeFrom(this.dialogRoot);
-          });
+          this.bindElementToDialog(TextSectionInput, (input: TextSectionInput) => new TodoComponent(input.title, input.body));
           break;
         default:
           break;
       }
-      dialog.attachTo(this.dialogRoot);
     }
   };
 }

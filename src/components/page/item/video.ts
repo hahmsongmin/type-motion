@@ -2,15 +2,13 @@ import BaseComponent from '../../component.js';
 
 export class VideoComponent extends BaseComponent<HTMLIFrameElement> {
   constructor(title: string, url: string) {
-    super(
-      `<section class="video">
-        <h3 class="video__title"></h3>
-        <div class="video__player"><iframe class="youtube__iframe" width="500" height="280" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></div>
-       <section>`
-    );
+    super(`<section class="video">
+            <div class="video__player"><iframe class="video__iframe"></iframe></div>
+            <h3 class="page-item__title video__title"></h3>
+        </section>`);
     const youtubeTitle = this.element.querySelector('.video__title') as HTMLHeadingElement;
     youtubeTitle.textContent = title;
-    const youtube = this.element.querySelector('.youtube__iframe') as HTMLIFrameElement;
+    const youtube = this.element.querySelector('.video__iframe') as HTMLIFrameElement;
     youtube.src = this.convertToEmbededURL(url);
   }
 
